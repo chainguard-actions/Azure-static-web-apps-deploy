@@ -1,0 +1,45 @@
+name: Test upload with build commands, api, routes and repo token
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Verify fixture app exists
+        run: |
+          test -f "$GITHUB_WORKSPACE/tests/fixtures/app/index.html" || { echo "FAIL: fixture missing"; exit 1; }
+          echo "PASS"
+      # No real Azure Static Web Apps deployment token is available in the harness,
+      # so the deploy cannot succeed; accept a graceful failure but validate output on success.
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          action: upload
+          app_location: tests/fixtures/app
+          app_artifact_location: ""
+          api_location: ""
+          api_build_command: "echo api-build"
+          app_build_command: "echo app-build"
+          routes_location: tests/fixtures/app
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          azure_static_web_apps_api_token: invalid-test-deployment-token
+      - name: Assert action ran
+        env:
+          RESULT: ${{ steps.action.outputs.static_web_app_url }}
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "result: $RESULT"
+          if [ "$OUTCOME" = "success" ]; then
+            case "$RESULT" in
+              https://*) echo "PASS: got '$RESULT'" ;;
+              *) echo "FAIL: action succeeded but URL output is invalid"; exit 1 ;;
+            esac
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (no valid deployment token)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi

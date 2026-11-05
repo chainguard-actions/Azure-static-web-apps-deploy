@@ -1,14 +1,26 @@
-# Azure/static-web-apps-deploy
+# GitHub Action for deploying to Azure Static Web Apps
 
-Deploys an application to Azure Static Web Apps
+This Github Action enables developers to build and publish their applications to Azure App Service Static Web Apps. This action utilizes [Oryx](https://github.com/microsoft/Oryx) to detect and build an application, then uploads the resulting application content, as well as any Azure Functions, to Azure. 
 
-Hardened by [Chainguard](https://www.chainguard.dev) from the upstream action at [https://github.com/Azure/static-web-apps-deploy](https://github.com/Azure/static-web-apps-deploy).
+* [More information about Azure Static Web Apps](https://aka.ms/swadocs)
+* [More information about this GitHub Action Workflow](https://aka.ms/swaworkflowconfig)
 
-## Versions
+## Issues and Feedback
+If you’d like to report an issue or provide feedback, please create issues against this [repository](https://github.com/azure/static-web-apps).
 
-| Version | Tag | Upstream commit | Hardening report |
-|---------|-----|-----------------|------------------|
-| v0.0.1-preview | [`v0.0.1-preview`](https://github.com/chainguard-actions/Azure-static-web-apps-deploy/tree/v0.0.1-preview) | [`920eddf`](https://github.com/Azure/static-web-apps-deploy/commit/920eddf8d7db5b5fc9afe76767b71c2a99db4760) | [`HARDENING.md`](https://github.com/chainguard-actions/Azure-static-web-apps-deploy/blob/v0.0.1-preview/HARDENING.md) |
+# Contributing
+
+This project welcomes contributions and suggestions.  Most contributions require you to agree to a
+Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
+the rights to use your contribution. For details, visit https://cla.opensource.microsoft.com.
+
+When you submit a pull request, a CLA bot will automatically determine whether you need to provide
+a CLA and decorate the PR appropriately (e.g., status check, comment). Simply follow the instructions
+provided by the bot. You will only need to do this once across all repos using our CLA.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
+contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Privacy
 
