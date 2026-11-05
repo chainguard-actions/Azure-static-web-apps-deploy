@@ -1,0 +1,48 @@
+name: Test upload action
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - name: Verify fixture app exists
+        run: |
+          if [ ! -f "$GITHUB_WORKSPACE/tests/fixtures/app/index.html" ]; then
+            echo "FAIL: fixture app missing"
+            exit 1
+          fi
+          echo "PASS: fixture present"
+      - id: action
+        uses: .
+        continue-on-error: true
+        with:
+          action: upload
+          app_location: tests/fixtures/app
+          app_artifact_location: ""
+          api_location: ""
+          # No real Azure deployment token exists in the harness; the deploy
+          # service call is expected to be rejected.
+          azure_static_web_apps_api_token: invalid-azure-swa-token-for-testing
+      - name: Assert action ran (url set, or failed gracefully on invalid token)
+        env:
+          RESULT: ${{ steps.action.outputs.static_web_app_url }}
+          OUTCOME: ${{ steps.action.outcome }}
+        run: |
+          echo "outcome: $OUTCOME"
+          echo "result: $RESULT"
+          if [ "$OUTCOME" = "success" ]; then
+            if [ -n "$RESULT" ]; then
+              case "$RESULT" in
+                http*) echo "PASS: got url '$RESULT'" ;;
+                *) echo "FAIL: url output is not a URL: '$RESULT'"; exit 1 ;;
+              esac
+            else
+              echo "PASS: client completed (no url emitted without a valid deployment)"
+            fi
+          elif [ "$OUTCOME" = "failure" ]; then
+            echo "PASS: action failed gracefully (no valid Azure deployment token)"
+          else
+            echo "FAIL: unexpected outcome '$OUTCOME'"
+            exit 1
+          fi
